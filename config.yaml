@@ -1,0 +1,6 @@
+server:
+  port: 8050
+yt-dlp:
+  ffmpeg_location: "/usr/bin/ffmpeg"
+  output_path: "${SNOWHIVE}"
+  is_active: true
