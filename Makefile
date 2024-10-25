@@ -11,3 +11,6 @@ speak:
 
 run:
 	go run main.go
+
+proto:
+	protoc --go_out=. --go-grpc_out=. service.proto

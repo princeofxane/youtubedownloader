@@ -9,13 +9,16 @@ import (
 )
 
 type YTDownloaderConfig struct {
-	ServerCfg ServerConfig `yaml:"server"`
-	YTDLPCfg  YTDLPConfig  `yaml:"yt-dlp"`
+	ServerCfg   ServerConfig `yaml:"server"`
+	YTDLPCfg    YTDLPConfig  `yaml:"yt-dlp"`
+	Environment string
 }
 
 type ServerConfig struct {
-	EndPoint string `yaml:"endpoint"`
-	Port     string `yaml:"port"`
+	HTTPEndPoint string `yaml:"http_endpoint"`
+	HTTPPort     string `yaml:"http_port"`
+	GRPCEndPoint string `yaml:"grpc_endpoint"`
+	GRPCPort     string `yaml:"grpc_port"`
 }
 
 // YTDLP is the command line tool that is used to download yt videos.
@@ -40,6 +43,8 @@ func ReadConfig() YTDownloaderConfig {
 	if err != nil {
 		log.Fatalf("error parsing config.yaml file: %v", err)
 	}
+
+	config.Environment = appENV
 
 	return config
 }
