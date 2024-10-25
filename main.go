@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"youtube_downloader/config"
+	"youtube_downloader/pkg/config"
 	"youtube_downloader/pkg/server"
 )
 

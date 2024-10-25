@@ -1,7 +1,7 @@
 package api
 
 import (
-	"youtube_downloader/config"
+	"youtube_downloader/pkg/config"
 
 	"github.com/gorilla/mux"
 )

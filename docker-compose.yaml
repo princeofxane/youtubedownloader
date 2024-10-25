@@ -1,18 +1,20 @@
 version: '3.9'  # Specify the version of Docker Compose
 
 services:
-  app:
+  go_server:
+    container_name: yt_downloader
+    hostname: yt_downloader
+    image: princeofxane/yt_downloader
+    restart: always
     build:
       context: .  # Build from the Dockerfile in the current directory
       dockerfile: Dockerfile  # Name of the Dockerfile
     ports:
       - "8050:8050"  # Map port 8080 on the host to port 8080 in the container
     environment:
-      - ENV_VAR_NAME=value  # Add any environment variables your app needs
+      - SNOWHIVE=/home/prince/Desktop/delete  # Add any environment variables your app needs
     volumes:
       - .:/app  # Mount the current directory to /app in the container (optional for development)
-    container_name: yt_downloader
-    hostname: yt_downloader
 
-volumes:
-  db_data:  # Define a named volume for the database
+# volumes:
+#   db_data:  # Define a named volume for the database
