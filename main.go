@@ -12,5 +12,5 @@ func main() {
 	cnf := config.ReadConfig()
 	r := server.New(cnf)
 	log.Printf("server has started at port: %s", cnf.ServerCfg.Port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", cnf.ServerCfg.Port), r))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", cnf.ServerCfg.EndPoint, cnf.ServerCfg.Port), r))
 }

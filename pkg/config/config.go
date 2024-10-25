@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/user"
-	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -16,7 +14,8 @@ type YTDownloaderConfig struct {
 }
 
 type ServerConfig struct {
-	Port string `yaml:"port"`
+	EndPoint string `yaml:"endpoint"`
+	Port     string `yaml:"port"`
 }
 
 // YTDLP is the command line tool that is used to download yt videos.
@@ -27,21 +26,11 @@ type YTDLPConfig struct {
 }
 
 func ReadConfig() YTDownloaderConfig {
+	appENV := os.Getenv("APP_ENV")
 
-	currentUser, err := user.Current()
-	if err != nil {
-		log.Fatalf("rrror getting hostname: %v\n", err)
-	}
+	configFile := fmt.Sprintf("./config/%s_config.yaml", appENV)
 
-	username := currentUser.Username
-	if strings.Contains(username, " ") {
-		// Take the first part if there's a space
-		username = strings.Split(username, " ")[0]
-	}
-
-	path := fmt.Sprintf("/home/%s/.config/yt_downloader/config.yaml", username)
-
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("error reading config.yaml file: %v", err)
 	}
