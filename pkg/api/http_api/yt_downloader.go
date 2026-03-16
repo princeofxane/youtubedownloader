@@ -22,7 +22,7 @@ func (a *api) ytDownload(w http.ResponseWriter, r *http.Request) {
 	}
 	ffmpegLocation := a.cnfg.YTDLPCfg.FFMPEGLocation
 
-	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation)
+	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation, a.cnfg)
 	if err != nil {
 		cerr, ok := err.(*custerr.CustomError)
 		if !ok {

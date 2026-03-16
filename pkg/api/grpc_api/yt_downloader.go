@@ -24,7 +24,7 @@ func (s *API) YTDownload(_ context.Context, in *pb.DownloadRequest) (*pb.Downloa
 
 	ffmpegLocation := s.Cnfg.YTDLPCfg.FFMPEGLocation
 
-	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation)
+	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation, s.Cnfg)
 	if err != nil {
 		return &pb.DownloadResponse{Message: fmt.Sprintf("an error occured: %v", err)}, nil
 	}

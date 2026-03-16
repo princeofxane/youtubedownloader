@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM)

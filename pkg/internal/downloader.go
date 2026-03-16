@@ -1,18 +1,33 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
 
+	"youtube_downloader/pkg/config"
 	custerr "youtube_downloader/pkg/custom_error"
 
 	logr "github.com/sirupsen/logrus"
 )
 
-func Downloader(videoUrl, videoQuality, ffmpegLocation string) error {
-	path, err := storagePath()
+func Downloader(videoUrl, videoQuality, ffmpegLocation string, cnf config.YTDownloaderConfig) error {
+	var path string
+
+	if cnf.Environment == "e0" {
+		path = cnf.YTDLPCfg.OutputPath
+	} else {
+		xpath, err := storagePath()
+		if err != nil {
+			logr.Errorf("failed to get storage path: %v", err)
+			return err
+		}
+		path = xpath
+	}
+
+	err := checkURL(videoUrl)
 	if err != nil {
 		return err
 	}
@@ -23,7 +38,26 @@ func Downloader(videoUrl, videoQuality, ffmpegLocation string) error {
 	if err != nil {
 		return err
 	} else {
-		logr.Info("download is completed")
+		logr.Info("download has been completed")
+	}
+
+	return nil
+}
+
+func checkURL(url string) error {
+	// Run yt-dlp with --simulate to check the URL
+	cmd := exec.Command("yt-dlp", "--simulate", url)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		// yt-dlp returns an error if the URL is invalid or the video doesn't exist
+		logr.Errorf("failed to validate URL: %s", err)
+		return fmt.Errorf("failed to validate URL: %s", string(output))
+	}
+
+	if len(output) == 0 {
+		logr.Errorln("no response from yt-dlp")
+		return errors.New("no response from yt-dlp")
 	}
 
 	return nil
