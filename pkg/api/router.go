@@ -7,12 +7,12 @@ import (
 )
 
 type api struct {
-	cnfg config.YTDownloaderConfig
+	conf *config.Config
 }
 
-func Handler(r *mux.Router, cnf config.YTDownloaderConfig) *mux.Router {
+func Handler(r *mux.Router, cnf *config.Config) *mux.Router {
 	a := &api{
-		cnfg: cnf,
+		conf: cnf,
 	}
 	r.HandleFunc("/health", a.healthCheck).Methods("GET")
 	r.HandleFunc("/download", a.ytDownload).Methods("POST")

@@ -3,9 +3,9 @@ app:
   version: 0.1.0
 
 server:
-  host: 0.0.0.0
+  host: localhost
   port: 8080
 
 yt-dlp:
   ffmpeg: /usr/bin/ffmpeg
-  download_path: /app/houseofcommons/youtubedownloader
+  download_path: /home/prince/Desktop/

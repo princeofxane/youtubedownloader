@@ -2,49 +2,65 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
+
+	u "youtube_downloader/pkg/util"
 
 	"gopkg.in/yaml.v2"
 )
 
-type YTDownloaderConfig struct {
-	ServerCfg   ServerConfig `yaml:"server"`
-	YTDLPCfg    YTDLPConfig  `yaml:"yt-dlp"`
-	Environment string
+const (
+	AppEnv = "APP_ENV"
+	K3s    = "k3s"
+	Dev    = "e0"
+)
+
+type Config struct {
+	App struct {
+		Name    string `yaml:"name"`
+		Version string `yaml:"version"`
+		Env     string
+	} `yaml:"app"`
+	Server struct {
+		Host string `yaml:"host"`
+		Port string `yaml:"port"`
+	} `yaml:"server"`
+	YTDLP struct {
+		FFMPEGLocation string `yaml:"ffmpeg_location"`
+		DownloadPath   string `yaml:"download_path"`
+	} `yaml:"yt-dlp"`
 }
 
-type ServerConfig struct {
-	HTTPEndPoint string `yaml:"http_endpoint"`
-	HTTPPort     string `yaml:"http_port"`
-	GRPCEndPoint string `yaml:"grpc_endpoint"`
-	GRPCPort     string `yaml:"grpc_port"`
+func LoadConfig() (*Config, error) {
+	env, ok := u.GetEnv(AppEnv)
+	if !ok {
+		return nil, fmt.Errorf("environment variable %s is not set", AppEnv)
+	}
+
+	// validate environment variable
+	if env != K3s && env != Dev {
+		return nil, fmt.Errorf("invalid environment: %s. Must be either %s or %s", env, K3s, Dev)
+	}
+
+	return parseConfig(env)
 }
 
-// YTDLP is the command line tool that is used to download yt videos.
-type YTDLPConfig struct {
-	FFMPEGLocation string `yaml:"ffmpeg_location"`
-	OutputPath     string `yaml:"output_path"`
-	IsActive       string `yaml:"is_active"`
-}
+func parseConfig(env string) (*Config, error) {
+	var config Config
 
-func ReadConfig() YTDownloaderConfig {
-	appENV := os.Getenv("APP_ENV")
+	config.App.Env = env
 
-	configFile := fmt.Sprintf("./config/%s_config.yaml", appENV)
+	configFile := fmt.Sprintf("./config/%s.yaml", env)
 
 	data, err := os.ReadFile(configFile)
 	if err != nil {
-		log.Fatalf("error reading config.yaml file: %v", err)
+		return nil, fmt.Errorf("error reading config.yaml file: %v", err)
 	}
 
-	var config YTDownloaderConfig
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
-		log.Fatalf("error parsing config.yaml file: %v", err)
+		return nil, fmt.Errorf("error parsing config.yaml file: %v", err)
 	}
 
-	config.Environment = appENV
-
-	return config
+	return &config, nil
 }

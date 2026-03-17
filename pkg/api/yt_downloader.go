@@ -11,7 +11,6 @@ import (
 )
 
 func (a *api) ytDownload(w http.ResponseWriter, r *http.Request) {
-	// get video url and quality from request parameters (http://localhost:8060/download?video_url=https://www.youtube.com/watch?v=qPELcGcVHfU&video_quality=1080)
 	videoUrl := r.URL.Query().Get("video_url")
 	videoQuality := r.URL.Query().Get("video_quality")
 
@@ -21,9 +20,11 @@ func (a *api) ytDownload(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "please provide required parameters")
 		return
 	}
-	ffmpegLocation := a.cnfg.YTDLPCfg.FFMPEGLocation
+	ffmpegLocation := a.conf.YTDLP.FFMPEGLocation
 
-	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation, a.cnfg)
+	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation, a.conf)
+	logr.Error(err)
+
 	if err != nil {
 		cerr, ok := err.(*custerr.CustomError)
 		if !ok {

@@ -13,33 +13,14 @@ import (
 	logr "github.com/sirupsen/logrus"
 )
 
-func Downloader(videoUrl, videoQuality, ffmpegLocation string, cnf config.YTDownloaderConfig) error {
-	var path string
-
-	if cnf.Environment == "e0" {
-		path = cnf.YTDLPCfg.OutputPath
-	} else {
-		xpath, err := storagePath()
-		if err != nil {
-			logr.Errorf("failed to get storage path: %v", err)
-			return err
-		}
-		path = xpath
-	}
-
-
-	fmt.Println("-------------------2-------------------------------")
-	fmt.Println("video url: ", videoUrl)
-	fmt.Println("--------------------------------------------------")
+func Downloader(videoUrl, videoQuality, ffmpegLocation string, conf *config.Config) error {
+	path := conf.YTDLP.DownloadPath
 
 	err := checkURL(videoUrl)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("------------------3--------------------------------")
-	fmt.Println("video url: ", videoUrl)
-	fmt.Println("--------------------------------------------------")
 	resolutionFlag := fmt.Sprintf("bestvideo[height<=%s]+bestaudio/best", videoQuality)
 
 	err = downloadVideo(resolutionFlag, ffmpegLocation, videoUrl, path)
@@ -59,12 +40,10 @@ func checkURL(url string) error {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		// yt-dlp returns an error if the URL is invalid or the video doesn't exist
-		logr.Errorf("failed to validate URL: %s", err)
 		return fmt.Errorf("failed to validate URL: %s", string(output))
 	}
 
 	if len(output) == 0 {
-		logr.Errorln("no response from yt-dlp")
 		return errors.New("no response from yt-dlp")
 	}
 
@@ -73,11 +52,6 @@ func checkURL(url string) error {
 
 func downloadVideo(resolutionFlag, ffmpegLocation, videoUrl, path string) error {
 	outputTemplate := fmt.Sprintf("%s/%s.%%(ext)s", path, "%(title)s")
-
-
-	fmt.Println("-----------------3---------------------------------")
-	fmt.Println("video url: ", videoUrl)
-	fmt.Println("--------------------------------------------------")
 
 	cmd := exec.Command("yt-dlp", "-f", resolutionFlag, "--ffmpeg-location", ffmpegLocation, "-o", outputTemplate, videoUrl)
 
@@ -94,28 +68,4 @@ func downloadVideo(resolutionFlag, ffmpegLocation, videoUrl, path string) error 
 		return custerr.CreateErr(msg, http.StatusInternalServerError)
 	}
 	return nil
-}
-
-func storagePath() (string, error) {
-	// check if env variable SNOWHIVE is present.
-	// this is the path to mounted harddrive.
-	path, exists := os.LookupEnv("SNOWHIVE")
-	if !exists {
-		msg := "SNOWHIVE env is not present"
-
-		logr.Errorln(msg)
-		return "", custerr.CreateErr(msg, http.StatusInternalServerError)
-	}
-
-	// check if the directory is active
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-
-		msg := fmt.Sprintf("SNOWHIVE path is not present, err: %v", err)
-
-		logr.Errorln(msg)
-		return "", custerr.CreateErr(msg, http.StatusInternalServerError)
-	}
-
-	return path, nil
 }

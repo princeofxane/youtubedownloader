@@ -18,22 +18,19 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	cnf := config.ReadConfig()
-
-	// run http server only in dev environment.
-	if cnf.Environment != "e2" {
-		go func() {
-			r := server.NewHTTP(cnf)
-			r.StartHTTPServer()
-		}()
+	conf, err := config.LoadConfig()
+	if err != nil {
+		logr.Fatalf("failed to load config: %v", err)
 	}
+
+	r := server.NewServer(conf)
+	go r.Start()
 
 	select {
 	case <-ctx.Done():
 		logr.Info("context done: shutting down")
 	case s := <-interrupt:
 		logr.WithField("signal", s).Info("server: received interrupt signal")
-
 	}
-
 }
+
