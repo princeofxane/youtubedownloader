@@ -5,12 +5,5 @@ APP_ENV?=e0
 include .env
 .EXPORT_ALL_VARIABLES:
 
-speak:
-	@echo $(APP_ENV)
-	@echo $(APP_NAME)
-
 run:
 	go run main.go
-
-proto:
-	protoc --go_out=. --go-grpc_out=. service.proto

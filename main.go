@@ -28,11 +28,6 @@ func main() {
 		}()
 	}
 
-	go func() {
-		r := server.NewGRPC(cnf)
-		r.StartGRPCServer(cnf)
-	}()
-
 	select {
 	case <-ctx.Done():
 		logr.Info("context done: shutting down")

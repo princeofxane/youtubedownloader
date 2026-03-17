@@ -14,8 +14,8 @@ func Handler(r *mux.Router, cnf config.YTDownloaderConfig) *mux.Router {
 	a := &api{
 		cnfg: cnf,
 	}
-	r.HandleFunc("/healthcheck", a.healthCheck).Methods("GET")
-	r.HandleFunc("/downloadvideo", a.ytDownload).Methods("POST")
+	r.HandleFunc("/health", a.healthCheck).Methods("GET")
+	r.HandleFunc("/download", a.ytDownload).Methods("POST")
 
 	return r
 }

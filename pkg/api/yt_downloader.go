@@ -11,8 +11,9 @@ import (
 )
 
 func (a *api) ytDownload(w http.ResponseWriter, r *http.Request) {
-	videoUrl := r.Header.Get("video_url")
-	videoQuality := r.Header.Get("video_quality")
+	// get video url and quality from request parameters (http://localhost:8060/download?video_url=https://www.youtube.com/watch?v=qPELcGcVHfU&video_quality=1080)
+	videoUrl := r.URL.Query().Get("video_url")
+	videoQuality := r.URL.Query().Get("video_quality")
 
 	if videoUrl == "" || videoQuality == "" {
 		logr.Errorln("needed parameter is not provided")

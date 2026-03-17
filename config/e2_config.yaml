@@ -1,9 +1,0 @@
-server:
-  http_endpoint: "localhost"
-  http_port: 8060
-  grpc_endpoint: "localhost"
-  grpc_port: 8070
-yt-dlp:
-  ffmpeg_location: "/usr/bin/ffmpeg"
-  output_path: "${SNOWHIVE}"
-  is_active: true

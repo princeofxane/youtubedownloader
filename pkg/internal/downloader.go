@@ -27,11 +27,19 @@ func Downloader(videoUrl, videoQuality, ffmpegLocation string, cnf config.YTDown
 		path = xpath
 	}
 
+
+	fmt.Println("-------------------2-------------------------------")
+	fmt.Println("video url: ", videoUrl)
+	fmt.Println("--------------------------------------------------")
+
 	err := checkURL(videoUrl)
 	if err != nil {
 		return err
 	}
 
+	fmt.Println("------------------3--------------------------------")
+	fmt.Println("video url: ", videoUrl)
+	fmt.Println("--------------------------------------------------")
 	resolutionFlag := fmt.Sprintf("bestvideo[height<=%s]+bestaudio/best", videoQuality)
 
 	err = downloadVideo(resolutionFlag, ffmpegLocation, videoUrl, path)
@@ -65,6 +73,11 @@ func checkURL(url string) error {
 
 func downloadVideo(resolutionFlag, ffmpegLocation, videoUrl, path string) error {
 	outputTemplate := fmt.Sprintf("%s/%s.%%(ext)s", path, "%(title)s")
+
+
+	fmt.Println("-----------------3---------------------------------")
+	fmt.Println("video url: ", videoUrl)
+	fmt.Println("--------------------------------------------------")
 
 	cmd := exec.Command("yt-dlp", "-f", resolutionFlag, "--ffmpeg-location", ffmpegLocation, "-o", outputTemplate, videoUrl)
 
