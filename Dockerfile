@@ -1,33 +1,37 @@
-# Step 1: Build the Go application
-FROM golang:1.23.2-bookworm as builder
+# Build stage
+FROM golang:1.23.2-alpine AS build
 
-# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy the go.mod and go.sum files to the container
 COPY go.mod go.sum ./
-
-# Copy the source code into the container
-COPY . .
-
-# Download the Go modules
 RUN go mod download
 
-# Build the Go application
-# RUN go build -o myapp .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o myapp .
+COPY . .
 
-# Step 2: Create a smaller image to run the application
-FROM alpine:3.20.3
+RUN CGO_ENABLED=0 GOOS=linux go build -o ytdownloader
 
-# Set the Current Working Directory inside the container
+# Runtime stage
+FROM alpine:latest
+
+# Install ffmpeg + dependencies
+RUN apk --no-cache add \
+    ca-certificates \
+    ffmpeg \
+    python3 \
+    curl
+
+# Install yt-dlp (arch-aware)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "aarch64" ]; then \
+        curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux_aarch64 -o /usr/local/bin/yt-dlp; \
+    else \
+        curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp; \
+    fi && \
+    chmod +x /usr/local/bin/yt-dlp
+
 WORKDIR /app
+COPY --from=build /app/ytdownloader .
+COPY --from=build /app/config ./config
 
-# Copy the binary from the builder stage
-COPY --from=builder /app/myapp .
-
-# Expose the port that your application listens on (change as needed)
 EXPOSE 8050
-
-# Command to run the executable
-CMD ["./myapp"]
+CMD ["./ytdownloader"]
