@@ -7,5 +7,5 @@ server:
   port: 8080
 
 yt-dlp:
-  ffmpeg: /usr/bin/ffmpeg
+  ffmpeg_location: /usr/bin/ffmpeg
   download_path: /home/prince/Desktop/
