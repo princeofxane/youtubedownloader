@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: youtubedownloader
+  namespace: woodland
+spec:
+  rules:
+  - host: youtubedownloader.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: youtubedownloader
+            port:
+              number: 80
