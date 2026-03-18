@@ -8,4 +8,4 @@ server:
 
 yt-dlp:
   ffmpeg: /usr/bin/ffmpeg
-  download_path: /app/houseofcommons/youtubedownloader
+  download_path: /mnt/houseofcommons/youtubedownloader
