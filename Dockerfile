@@ -20,6 +20,7 @@ RUN apk --no-cache add \
     ca-certificates \
     ffmpeg \
     python3 \
+    py3-pip \
     curl \
     unzip
 
@@ -29,13 +30,8 @@ RUN ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64") && \
     unzip /tmp/deno.zip -d /usr/local/bin && \
     rm /tmp/deno.zip
 
-# Install yt-dlp (arch-aware)
-RUN if [ "$TARGETARCH" = "arm64" ]; then \
-        curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux_aarch64 -o /usr/local/bin/yt-dlp; \
-    else \
-        curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp; \
-    fi && \
-    chmod +x /usr/local/bin/yt-dlp
+# Install yt-dlp via pip (musl/Alpine compatible)
+RUN pip3 install --no-cache-dir yt-dlp --break-system-packages
 
 WORKDIR /app
 COPY --from=build /app/ytdownloader .
