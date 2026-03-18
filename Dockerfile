@@ -21,8 +21,8 @@ RUN apk --no-cache add \
     curl
 
 # Install yt-dlp (arch-aware)
-RUN ARCH=$(uname -m) && \
-    if [ "$ARCH" = "aarch64" ]; then \
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
         curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux_aarch64 -o /usr/local/bin/yt-dlp; \
     else \
         curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp; \
@@ -33,5 +33,5 @@ WORKDIR /app
 COPY --from=build /app/ytdownloader .
 COPY --from=build /app/config ./config
 
-EXPOSE 8050
+EXPOSE 8080
 CMD ["./ytdownloader"]
