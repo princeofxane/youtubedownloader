@@ -23,8 +23,8 @@ RUN apk --no-cache add \
     unzip \
     nodejs
 
-# Install yt-dlp via pip (musl/Alpine compatible)
-RUN pip3 install --no-cache-dir yt-dlp --break-system-packages
+# Install yt-dlp and yt-dlp-ejs via pip (musl/Alpine compatible)
+RUN pip3 install --no-cache-dir yt-dlp yt-dlp-ejs --break-system-packages
 
 WORKDIR /app
 COPY --from=build /app/ytdownloader .
