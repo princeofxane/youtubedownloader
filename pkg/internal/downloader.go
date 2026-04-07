@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 
 	"youtube_downloader/pkg/config"
 	custerr "youtube_downloader/pkg/custom_error"
@@ -68,4 +69,14 @@ func downloadVideo(resolutionFlag, ffmpegLocation, videoUrl, path string) error 
 		return custerr.CreateErr(msg, http.StatusInternalServerError)
 	}
 	return nil
+}
+
+func GetVideoInfo(videoUrl string) (string, error) {
+	cmd := exec.Command("yt-dlp", "--print", "title", videoUrl)
+	output, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to get video info: %w", err)
+	}
+	title := strings.TrimSpace(string(output))
+	return title, nil
 }

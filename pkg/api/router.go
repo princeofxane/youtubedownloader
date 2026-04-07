@@ -16,6 +16,7 @@ func Handler(r *mux.Router, cnf *config.Config) *mux.Router {
 	}
 	r.HandleFunc("/health", a.healthCheck).Methods("GET")
 	r.HandleFunc("/download", a.ytDownload).Methods("POST")
+	r.HandleFunc("/video_info", a.ytVideoInfo).Methods("GET")
 
 	return r
 }
