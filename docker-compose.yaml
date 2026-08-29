@@ -1,0 +1,9 @@
+services:
+  ytdownloader:
+    image: princeofxane/ytdownloader:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./downloads:/downloads
+    environment:
+      - APP_ENV=e0

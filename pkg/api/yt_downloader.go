@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+
 	"youtube_downloader/pkg/internal"
 
 	custerr "youtube_downloader/pkg/custom_error"
@@ -23,9 +24,9 @@ func (a *api) ytDownload(w http.ResponseWriter, r *http.Request) {
 	ffmpegLocation := a.conf.YTDLP.FFMPEGLocation
 
 	err := internal.Downloader(videoUrl, videoQuality, ffmpegLocation, a.conf)
-	logr.Error(err)
-
 	if err != nil {
+		logr.Error(err)
+
 		cerr, ok := err.(*custerr.CustomError)
 		if !ok {
 			w.WriteHeader(http.StatusInternalServerError)

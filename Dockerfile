@@ -30,5 +30,9 @@ WORKDIR /app
 COPY --from=build /app/ytdownloader .
 COPY --from=build /app/config ./config
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 8080
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["./ytdownloader"]

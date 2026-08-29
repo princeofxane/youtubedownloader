@@ -3,9 +3,9 @@ app:
   version: 0.1.0
 
 server:
-  host: localhost
+  host: 0.0.0.0
   port: 8080
 
 yt-dlp:
   ffmpeg_location: /usr/bin/ffmpeg
-  download_path: /home/prince/Desktop/
+  download_path: ./downloads
